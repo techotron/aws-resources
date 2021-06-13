@@ -1,0 +1,10 @@
+{
+    "configurations": [{
+            "name": "go run main.go",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceRoot}/main.go",
+        }
+    ]
+}

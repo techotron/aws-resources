@@ -1,0 +1,28 @@
+version: "3"
+services:
+  backend:
+    build:
+      context: ./
+      dockerfile: Dockerfile-dev
+    volumes:
+      - ./:/app:rw
+    environment:
+      AWS_REGION: ${AWS_REGION}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_SESSION_TOKEN: ${AWS_SESSION_TOKEN}
+  test:
+    build:
+      context: ./
+      dockerfile: Dockerfile-tests
+    volumes:
+      - ./:/backend
+    entrypoint:
+      [
+        "go",
+        "test",
+        "-p",
+        "1",
+        "./...",
+        "-coverprofile=c.out",
+      ]
