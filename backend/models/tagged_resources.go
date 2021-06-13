@@ -10,5 +10,8 @@ type ResourcesRow struct {
 	App				string		`json:"app"`
 	Pool			string		`json:"pool"`
 	ExtraTags		[]types.Tag	`json:"extraTags"`
+	Service			string		`json:"service"`
+	AccountID		string		`json:"accountId"`
+	Resource		string		`json:"resource"`
 }
 

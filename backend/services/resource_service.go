@@ -9,6 +9,7 @@ import (
 	"github.com/techotron/aws-resources/backend/models"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/aws/arn"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/resourcegroupstaggingapi"
 	"github.com/aws/aws-sdk-go-v2/service/resourcegroupstaggingapi/types"
@@ -50,9 +51,10 @@ func GetResources(team string, region string) (allResources []models.ResourcesRo
 		}
 	
 		for _, resource := range resources.ResourceTagMappingList {
+			arnObj := arn.ARN{}
 			al := models.ResourcesRow{}
 			for _, t := range resource.Tags {
-				switch *t.Key {
+				switch strings.ToLower(*t.Key) {
 				case "team":
 					al.Team = *t.Value
 				case "env":
@@ -67,6 +69,14 @@ func GetResources(team string, region string) (allResources []models.ResourcesRo
 					al.ExtraTags = append(al.ExtraTags, t)
 				}
 			}
+			arnObj, err = arn.Parse(*resource.ResourceARN)
+			if err != nil {
+				log.Warnf("Failed to parse ARN: %s. Error: %s", *resource.ResourceARN, err)
+				break
+			}
+			al.Service = arnObj.Service
+			al.AccountID = arnObj.AccountID
+			al.Resource = arnObj.Resource
 			al.ResourceARN = *resource.ResourceARN
 			allResources = append(allResources, al)
 		}
